@@ -6,17 +6,18 @@ from fabric.api import local
 
 
 def do_pack():
-    """Create a tar gzipped archive of the directory web_static."""
-    dt = datetime.utcnow()
-    file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
-                                                         dt.month,
-                                                         dt.day,
-                                                         dt.hour,
-                                                         dt.minute,
-                                                         dt.second)
-    if os.path.isdir("versions") is False:
-        if local("mkdir -p versions").failed is True:
+    """
+    A function that generates an archive
+    """
+    date = datetime.now()
+    archive = "versions/web_static_{}{}{}{}{}{}.tgz".format(
+        date.year, date.month, date.day,
+        date.hour, date.minute, date.second
+    )
+    if not path.isdir("versions"):
+        if local("mkdir versions").failed:
             return None
-    if local("tar -cvzf {} web_static".format(file)).failed is True:
-        return None
-    return file
+    cmd = "cd web_static && tar -cvzf ../{} . && cd -".format(archive)
+    if local(cmd).succeeded:
+        return archive
+    return None
